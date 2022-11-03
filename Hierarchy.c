@@ -26,12 +26,15 @@ void createSubDirectory( struct DirNode *parent, char name[]) {
     newNode->parent = parent;
     strcpy(newNode->dirName, name);
 
-		struct DirNode *temp = parent;
-		while(temp->subDirs) {
-			temp = temp->subDirs;
+		struct DirNode *temp = parent->subDirs;
+		if(temp) {
+			while(temp->nextSiblingDir) {
+				temp = temp->nextSiblingDir;
+			}
+			temp->nextSiblingDir = newNode;
+		} else {
+			parent->subDirs = newNode;
 		}
-		
-		temp->subDirs = newNode;
     printf("\nSub Directory: %s created under %s", newNode->dirName, parent->dirName);
     
     parent->dirCount++;
@@ -77,7 +80,7 @@ void main() {
 		
 		struct DirNode *currDir = &rootDir;
 
-		createSubDirectory(&rootDir, "SubDir1");
+		//createSubDirectory(&rootDir, "SubDir1");
 		
 		char tempDirName[100];
 		int choice;
@@ -98,11 +101,13 @@ void main() {
 			if(currDir->dirCount == 0) {
 				printf("No Directories");
 			} else {
-				struct DirNode * temp = currDir;
-				while(temp->subDirs) {
-					temp = temp->subDirs;
+				struct DirNode * temp = currDir->subDirs;
+				if(temp) 
 					printf("\t%s", temp->dirName);
-				}
+					while(temp->nextSiblingDir) {
+						temp = temp->nextSiblingDir;
+						printf("\t%s", temp->dirName);
+					}
 			}
 			
 			
